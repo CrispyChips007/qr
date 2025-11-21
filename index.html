@@ -1,11 +1,262 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>QR Puzzle</title>
+  <meta charset="UTF-8">
+  <title>/qr – Restricted Area</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #05060a;
+      --bg-alt: #0b0d16;
+      --fg: #e5e7ef;
+      --muted: #7b8196;
+      --accent: #37ff9f;
+      --accent-soft: rgba(55, 255, 159, 0.08);
+      --border: #25283a;
+      --danger: #ff4f5e;
+      --mono: "Fira Code", "JetBrains Mono", Consolas, monospace;
+      --sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at top, #111425 0, #05060a 55%);
+      color: var(--fg);
+      font-family: var(--sans);
+      min-height: 100vh;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .frame {
+      max-width: 720px;
+      width: 100%;
+      background: linear-gradient(145deg, var(--bg-alt), #05060a);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+      padding: 2rem 2.4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .frame::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(55, 255, 159, 0.11), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(71, 123, 255, 0.12), transparent 55%);
+      opacity: 0.8;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .frame-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .tag {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      background: var(--accent-soft);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .tag-dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 50%;
+      background: var(--danger);
+      box-shadow: 0 0 10px rgba(255, 79, 94, 0.9);
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      margin: 0;
+      font-family: var(--mono);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 0.15rem;
+    }
+
+    main {
+      margin-top: 1.5rem;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--fg);
+    }
+
+    main p {
+      margin: 0 0 0.9rem;
+    }
+
+    code {
+      font-family: var(--mono);
+      background: rgba(10, 12, 22, 0.9);
+      padding: 0.1rem 0.3rem;
+      border-radius: 4px;
+      border: 1px solid rgba(70, 76, 110, 0.7);
+      font-size: 0.9em;
+    }
+
+    .hint-box {
+      margin-top: 1.2rem;
+      padding: 0.9rem 1rem;
+      border-radius: 10px;
+      border: 1px dashed rgba(117, 122, 152, 0.8);
+      background: rgba(7, 9, 18, 0.95);
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .hint-label {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+
+    .links {
+      margin-top: 1.4rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+    }
+
+    .links a {
+      position: relative;
+      font-family: var(--mono);
+      text-decoration: none;
+      padding-bottom: 0.15rem;
+      color: var(--muted);
+    }
+
+    .links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 1px;
+      width: 0;
+      background: linear-gradient(90deg, var(--accent), #74b0ff);
+      transition: width 0.18s ease-out;
+    }
+
+    .links a:hover::after {
+      width: 100%;
+    }
+
+    footer {
+      margin-top: 1.6rem;
+      font-size: 0.72rem;
+      color: var(--muted);
+      opacity: 0.7;
+      display: flex;
+      justify-content: space-between;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+      font-family: var(--mono);
+    }
+
+    .footer-id {
+      opacity: 0.65;
+    }
+
+    .footer-status-ok {
+      color: var(--accent);
+    }
+
+  </style>
 </head>
 <body>
-  <h1>Welcome to the QR Puzzle</h1>
-  <p>If you’re seeing this, the static site is working.</p>
+  <div class="frame">
+    <div class="frame-inner">
+      <header>
+        <div>
+          <div class="tag">
+            <span class="tag-dot"></span>
+            ACCESS RESTRICTED
+          </div>
+          <h1>/qr endpoint</h1>
+          <div class="subtitle">
+            Unlisted resource. For authorised visitors who already know what they’re looking for.
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <p>
+          Unfortunately, there isn’t much to see here on the surface.
+        </p>
+        <p>
+          Directory indexes are disabled, and anything interesting is
+          <em>not</em> linked from this page. If you’ve arrived legitimately, you
+          should already have enough context to navigate deeper.
+        </p>
+        <p>
+          Static content only. No forms. No search. No discovery service.
+        </p>
+
+        <div class="hint-box">
+          <div class="hint-label">HINT</div>
+          <div>
+            Paths are only useful if you already know them.
+            Sometimes the trail starts offline.
+          </div>
+        </div>
+
+        <div class="links">
+          <!-- harmless “loops” back to itself to add to the vibe -->
+          <a href="./">/qr</a>
+          <a href="index.html">/qr/index.html</a>
+          <a href="#">/qr/status</a>
+          <a href="#">/qr/logs</a>
+        </div>
+      </main>
+
+      <footer>
+        <div class="footer-id">ref: qr-gw-01</div>
+        <div class="footer-status-ok">static node · no active services</div>
+      </footer>
+    </div>
+  </div>
 </body>
 </html>
