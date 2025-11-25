@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Requires pycryptodome - pip install pycryptodome
 
 from Crypto.PublicKey import RSA
 from Crypto.Util.number import inverse
